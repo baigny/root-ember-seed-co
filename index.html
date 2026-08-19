@@ -662,13 +662,18 @@ document.addEventListener('DOMContentLoaded', function () {
      (e.g. "/root-ember-seed-co"), computed once from whatever URL the
      page first loads at — works whether that's the root or a deep
      link like /root-ember-seed-co/about (served via 404.html, see
-     that file's comment for why GitHub Pages needs it). */
+     that file's comment for why GitHub Pages needs it).
+     Site routes are always exactly BASE_PATH or BASE_PATH/<segment> —
+     so the last path segment (if there's more than one) is always the
+     route, valid or not. Popping it only when it matches a known
+     section id (the old logic) corrupted BASE_PATH itself on an
+     invalid deep link (e.g. /root-ember-seed-co/typo), which then
+     leaked into every link built afterward. */
   var SECTION_IDS = sections.map(function (s) { return s.id; });
   var BASE_PATH = (function () {
-    var path = window.location.pathname.replace(/\/$/, '');
-    var segments = path.split('/');
-    if (SECTION_IDS.indexOf(segments[segments.length - 1]) !== -1) segments.pop();
-    return segments.join('/');
+    var segs = window.location.pathname.split('/').filter(Boolean);
+    if (segs.length > 1) segs.pop();
+    return segs.length ? '/' + segs.join('/') : '';
   })();
 
   function pathFor(id) {
