@@ -327,9 +327,6 @@ a{color:var(--re-gold);} a:hover{color:var(--re-lime);}
       <h2 class="mb-0">What's growing out there.</h2>
     </div>
     <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-      <button type="button" class="btn btn-sm btn-outline-brand position-relative mb-3" id="carouselPauseBtn" style="z-index:5;" aria-pressed="false">
-        <i class="bi bi-pause-fill" aria-hidden="true"></i> <span id="carouselPauseLabel">Pause</span>
-      </button>
       <div class="carousel-inner">
         <div class="carousel-item active">
           <div class="testimonial-card">
@@ -915,29 +912,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   renderProductGrid();
-
-  /* ---------- CAROUSEL PAUSE CONTROL ----------
-     WCAG 2.2.2 (Pause, Stop, Hide): auto-advancing content needs a
-     user-operable pause mechanism, not just pause-on-hover (which
-     doesn't help touch/keyboard users). */
-  var testimonialCarouselEl = document.getElementById('testimonialCarousel');
-  var testimonialCarousel = bootstrap.Carousel.getOrCreateInstance(testimonialCarouselEl);
-  var carouselPauseBtn = document.getElementById('carouselPauseBtn');
-  var carouselPauseLabel = document.getElementById('carouselPauseLabel');
-  var carouselPaused = false;
-  carouselPauseBtn.addEventListener('click', function () {
-    carouselPaused = !carouselPaused;
-    if (carouselPaused) {
-      testimonialCarousel.pause();
-      carouselPauseLabel.textContent = 'Play';
-      carouselPauseBtn.querySelector('i').className = 'bi bi-play-fill';
-    } else {
-      testimonialCarousel.cycle();
-      carouselPauseLabel.textContent = 'Pause';
-      carouselPauseBtn.querySelector('i').className = 'bi bi-pause-fill';
-    }
-    carouselPauseBtn.setAttribute('aria-pressed', String(carouselPaused));
-  });
 
   /* Product detail modal: prev/next nav is scoped to whatever the
      current filter shows (spans all matching pages, not just the
