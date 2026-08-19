@@ -1,0 +1,1014 @@
+<!-- GitHub Pages serves this file (with a 404 HTTP status) for any
+     path it has no matching file for — e.g. /root-ember-seed-co/about
+     on a hard refresh or direct link. Since this is a client-side
+     SPA, the fix is to make 404.html an exact copy of index.html: the
+     app boots normally and its own router (see the inline script)
+     reads the URL path and shows the right section. Keep this file in
+     sync with index.html whenever index.html changes. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Root &amp; Ember Seed Co. | Heirloom Seeds, Boldly Grown</title>
+<meta name="description" content="Root & Ember Seed Co. — heirloom and specialty crop seed varieties, agronomy consulting, and bulk seed supply.">
+
+<!-- Bootstrap 5 CSS CDN (single stylesheet dependency, no custom CSS file) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   Everything below is the ONLY custom styling in this project.
+   Layout, grid, components (nav/cards/forms/modals) come from
+   Bootstrap 5 utility classes in the markup — this block only
+   supplies brand tokens + the handful of things Bootstrap has
+   no utility for (SPA panel show/hide, hero art, organic radii).
+   ============================================================ */
+:root{
+  --re-bg:#14120f; --re-bg-alt:#1b1712; --re-surface:#221d16; --re-surface-raised:#2a231a;
+  --re-border:rgba(243,236,225,.12); --re-border-strong:rgba(243,236,225,.24);
+  --re-text:#f3ece1; --re-text-muted:#b7ac99; --re-text-faint:#9c9280;
+  --re-rust:#c1440e; --re-rust-dark:#8f3109;
+  --re-gold:#e8a93b; --re-gold-dark:#b8811f;
+  --re-lime:#c4f135; --re-lime-dark:#9fc72a;
+  --re-font-display:"Fraunces",Georgia,serif; --re-font-body:"Space Grotesk","Segoe UI",sans-serif;
+  --re-radius-organic:42% 58% 61% 39% / 45% 40% 60% 55%;
+}
+html,body{overflow-x:hidden;max-width:100%;}
+body{background:var(--re-bg);color:var(--re-text);font-family:var(--re-font-body);}
+h1,h2,h3,h4,.font-display{font-family:var(--re-font-display);font-weight:600;color:var(--re-text);}
+a{color:var(--re-gold);} a:hover{color:var(--re-lime);}
+::selection{background:var(--re-lime);color:#14120f;}
+.text-lime{color:var(--re-lime)!important;} .text-gold{color:var(--re-gold)!important;} .text-rust{color:var(--re-rust)!important;}
+.bg-surface{background:var(--re-surface)!important;border:1px solid var(--re-border);}
+.bg-surface-alt{background:var(--re-bg-alt)!important;}
+.border-brand{border-color:var(--re-border)!important;}
+
+/* eyebrow label */
+.eyebrow{font-weight:600;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;color:var(--re-lime);}
+
+/* navbar — z-index above modal backdrop (1050) and modal (1055) so the
+   logo/brand stays fully visible instead of getting dimmed while the
+   product detail modal is open */
+/* z-index 1052 sits between Bootstrap's modal backdrop (1050) and the
+   modal itself (1055): high enough that the dark backdrop dim doesn't
+   wash out the navbar, but low enough that the modal (and its close
+   button) always renders above it — a fixed value here can't drift
+   out of range the way guessing the navbar's pixel height would. */
+#mainNav{background:rgba(20,18,15,.8);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--re-border);transition:background .3s;z-index:1052;}
+#mainNav.scrolled{background:rgba(20,18,15,.96);}
+.navbar-brand .brand-mark{display:inline-flex;flex-shrink:0;width:36px;height:36px;align-items:center;justify-content:center;background:var(--re-rust);color:#fff;border-radius:50%;font-size:1rem;}
+/* explicit color (not just relying on data-bs-theme="dark") so the
+   brand text is guaranteed visible against the dark navbar even if
+   Bootstrap's theme variables aren't picked up for any reason */
+.navbar-brand{font-family:var(--re-font-display);font-weight:700;color:var(--re-text)!important;white-space:normal;font-size:clamp(.82rem,3.4vw,1.15rem);line-height:1.15;}
+.navbar-brand em{color:var(--re-lime);font-style:normal;}
+.navbar-nav .nav-link{color:var(--re-text-muted)!important;font-weight:500;}
+.navbar-nav .nav-link:hover,.navbar-nav .nav-link.is-active{color:var(--re-lime)!important;}
+.navbar-toggler{border-color:var(--re-border-strong);}
+.btn-nav-contact{background:var(--re-rust);color:#fff!important;border-radius:999px;padding:.4rem 1.1rem;}
+
+/* buttons */
+.btn-accent{background:var(--re-lime);border-color:var(--re-lime);color:#14120f;font-weight:600;}
+.btn-accent:hover{background:var(--re-lime-dark);border-color:var(--re-lime-dark);color:#14120f;}
+.btn-outline-brand{border:1px solid var(--re-border-strong);color:var(--re-text);}
+.btn-outline-brand:hover{border-color:var(--re-gold);color:var(--re-gold);background:transparent;}
+.btn{border-radius:999px;font-weight:600;}
+
+/* SPA section panels */
+.page-section{display:none;padding-top:6.5rem;padding-bottom:4.5rem;min-height:100vh;}
+.page-section.active{display:block;animation:reFadeIn .45s ease forwards;}
+@keyframes reFadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* hero */
+.hero-section{background:radial-gradient(circle at 85% 10%,rgba(193,68,14,.28),transparent 45%),radial-gradient(circle at 8% 90%,rgba(196,241,53,.12),transparent 40%),var(--re-bg);}
+.hero-title{font-size:clamp(2.4rem,5.5vw,4rem);line-height:1.05;}
+.hero-img-wrap{max-width:420px;}
+.hero-img{width:100%;display:block;border-radius:50%;object-fit:cover;aspect-ratio:1/1;border:1px solid var(--re-border-strong);box-shadow:0 24px 64px rgba(0,0,0,.45);}
+.hero-badge{background:var(--re-surface-raised);border:1px solid var(--re-border-strong);border-radius:1rem;padding:.9rem 1.1rem;box-shadow:0 12px 32px rgba(0,0,0,.35);}
+.stat-num{font-family:var(--re-font-display);font-size:1.9rem;font-weight:700;color:var(--re-gold);}
+.stat-label{color:var(--re-text-faint);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;}
+
+/* circular portrait (about photo) */
+.rounded-organic{border-radius:50%;object-fit:cover;width:100%;max-width:420px;display:block;margin:0 auto;aspect-ratio:1/1;}
+
+/* cards: value / service / category / testimonial */
+.hover-card{background:var(--re-surface);border:1px solid var(--re-border);border-radius:1rem;transition:transform .25s,border-color .25s;}
+.hover-card:hover{transform:translateY(-6px);border-color:var(--re-gold);}
+.icon-badge{width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:rgba(196,241,53,.1);border-radius:50%;color:var(--re-lime);font-size:1.5rem;}
+
+/* category tile */
+.category-tile{position:relative;border-radius:1rem;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--re-border);cursor:pointer;}
+.category-tile img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.category-tile:hover img{transform:scale(1.08);}
+.category-tile .tile-label{position:absolute;inset:auto 0 0 0;padding:1rem;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);}
+.category-tile .tile-label h3{font-size:1.05rem;margin:0;color:#fff;}
+.category-tile .tile-label span{font-size:.78rem;color:var(--re-lime);}
+
+/* testimonial carousel */
+.testimonial-card{background:var(--re-surface);border:1px solid var(--re-border);border-radius:1rem;padding:2.5rem;max-width:720px;margin:0 auto;text-align:center;}
+.testimonial-card i.bi-quote{font-size:2rem;color:var(--re-lime);}
+.testimonial-card p.quote{font-family:var(--re-font-display);font-size:1.25rem;font-style:italic;}
+#testimonialCarousel .carousel-indicators [data-bs-target]{background:var(--re-gold);}
+#testimonialCarousel .carousel-control-prev-icon,#testimonialCarousel .carousel-control-next-icon{filter:invert(1) grayscale(1);}
+
+/* product filters + pagination */
+.filter-btn{background:transparent;border:1px solid var(--re-border-strong);color:var(--re-text-muted);border-radius:999px;padding:.4rem 1rem;font-size:.88rem;}
+.filter-btn.active{background:var(--re-lime);color:#14120f;border-color:var(--re-lime);}
+.pagination .page-link{background:var(--re-surface);border-color:var(--re-border-strong);color:var(--re-text-muted);margin:0 .2rem;border-radius:999px!important;min-width:2.5rem;text-align:center;}
+.pagination .page-link:hover{background:var(--re-surface-raised);color:var(--re-text);}
+.pagination .page-item.active .page-link{background:var(--re-lime);border-color:var(--re-lime);color:#14120f;}
+.pagination .page-item.disabled .page-link{background:transparent;color:var(--re-text-faint);opacity:.5;}
+
+/* product cards */
+.product-card{background:var(--re-surface);border:1px solid var(--re-border);border-radius:1rem;overflow:hidden;transition:transform .25s,border-color .25s;cursor:pointer;}
+.product-card:hover{transform:translateY(-6px);border-color:var(--re-rust);}
+.product-card .product-img-wrap{aspect-ratio:4/3;overflow:hidden;position:relative;}
+.product-card img{width:100%;height:100%;object-fit:cover;}
+.product-tag{position:absolute;top:.75rem;left:.75rem;background:var(--re-rust);color:#fff;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.3rem .7rem;border-radius:999px;}
+
+/* modal theming */
+.modal-content.bg-surface{background:var(--re-surface-raised)!important;}
+.spec-table{--bs-table-bg:transparent;--bs-table-color:var(--re-text-muted);background:transparent!important;}
+.spec-table td{color:var(--re-text-muted);border-color:var(--re-border)!important;background:transparent!important;}
+.spec-table td:first-child{color:var(--re-text);font-weight:600;width:45%;}
+
+/* modal detail viewer: image frame is height-capped to a viewport
+   fraction so the whole modal fits on screen with no internal
+   scrolling, plus prev/next nav controls. Only modal-body scrolls —
+   header and footer are ordinary flex rows in modal-content's column
+   layout, so they always stay fully visible without needing `sticky`. */
+.modal-body{overflow:auto;}
+/* Modal always starts below the fixed navbar (~5.5rem clears it even
+   when the brand text wraps to 2 lines on a narrow screen) rather
+   than vertically centering into it — keeps the navbar visibly
+   uncovered instead of relying on z-index draw order alone. Applied
+   at every width, not just mobile: a short viewport can push a
+   centered tall modal up under the navbar on desktop too. */
+.modal-dialog.modal-dialog-centered{align-items:flex-start;min-height:calc(100% - 6.25rem);margin-top:5.5rem;margin-bottom:.75rem;}
+.modal-dialog{max-height:calc(100vh - 6.25rem);max-height:calc(100dvh - 6.25rem);}
+.modal-content{max-height:calc(100vh - 6.25rem);max-height:calc(100dvh - 6.25rem);}
+.modal-img-frame{position:relative;min-height:260px;max-height:58vh;display:flex;align-items:center;justify-content:center;background:var(--re-bg-alt);border-radius:.75rem;overflow:hidden;}
+.modal-img-frame img{max-height:58vh;max-width:100%;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto;}
+.modal-nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid var(--re-border-strong);background:rgba(20,18,15,.65);color:var(--re-text);display:flex;align-items:center;justify-content:center;font-size:1.1rem;z-index:5;}
+.modal-nav-btn:hover{background:var(--re-lime);color:#14120f;border-color:var(--re-lime);}
+.modal-nav-prev{left:.75rem;}
+.modal-nav-next{right:.75rem;}
+.modal-counter{font-size:.78rem;color:var(--re-text-faint);}
+
+/* contact */
+.contact-form .form-control,.contact-form .form-select{background:var(--re-bg-alt);border:1px solid var(--re-border-strong);color:var(--re-text);}
+.contact-form .form-control:focus,.contact-form .form-select:focus{background:var(--re-bg-alt);color:var(--re-text);border-color:var(--re-lime);box-shadow:0 0 0 .25rem rgba(196,241,53,.2);}
+.contact-form .form-control::placeholder{color:var(--re-text-faint);}
+.form-success{display:none;}
+.form-success.show{display:block;}
+.social-row a{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--re-bg-alt);border:1px solid var(--re-border-strong);color:var(--re-text);}
+.social-row a:hover{background:var(--re-rust);border-color:var(--re-rust);}
+
+/* footer + back to top */
+.site-footer{background:var(--re-bg-alt);border-top:1px solid var(--re-border);}
+.back-to-top{position:fixed;right:1.5rem;bottom:1.5rem;width:46px;height:46px;border-radius:50%;background:var(--re-rust);color:#fff;border:none;display:none;align-items:center;justify-content:center;z-index:1500;box-shadow:0 12px 32px rgba(0,0,0,.35);}
+.back-to-top.show{display:flex;}
+
+@media (max-width:991px){ .hero-badge{position:static!important;margin-top:1rem;} }
+.category-tile:focus-visible,.product-card:focus-visible{outline:2px solid var(--re-lime);outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header>
+  <nav class="navbar navbar-expand-lg fixed-top" id="mainNav" data-bs-theme="dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/root-ember-seed-co/" data-nav-link>
+        <span class="brand-mark me-2"><i class="bi bi-flower2"></i></span>
+        Root <em>&amp;</em>&nbsp;Ember&nbsp;Seed&nbsp;Co.
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/" data-nav-link data-section="home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/about" data-nav-link data-section="about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/services" data-nav-link data-section="services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/products" data-nav-link data-section="products">Products</a></li>
+          <li class="nav-item"><a class="nav-link btn-nav-contact" href="/root-ember-seed-co/contact" data-nav-link data-section="contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main id="appRoot">
+
+<!-- ============================================================
+     HOME — expanded into multiple sub-sections, all inside one
+     SPA panel: Hero / Why Us / Crop Categories / Testimonials
+     ============================================================ -->
+<section id="home" class="page-section active" data-section-panel>
+
+  <!-- Hero -->
+  <div class="hero-section pb-5">
+    <div class="container pt-4 pb-5">
+      <div class="row align-items-center gy-5">
+        <div class="col-lg-7">
+          <p class="eyebrow mb-3"><i class="bi bi-stars me-1"></i> Est. 2014 — Small-batch seed house</p>
+          <h1 class="hero-title mb-4">Heirloom seeds,<br><span class="text-rust">boldly</span> grown.</h1>
+          <p class="fs-5 text-body-secondary mb-4" style="max-width:540px;color:var(--re-text-muted)!important;">We save, breed, and ship rare and open-pollinated crop varieties to growers who think a garden should be a little dangerous. No hybrids that quit on you. No beige tomatoes.</p>
+          <div class="d-flex gap-3 flex-wrap mb-5">
+            <a href="/root-ember-seed-co/products" class="btn btn-accent btn-lg" data-nav-link data-section="products">Shop Varieties <i class="bi bi-arrow-right"></i></a>
+            <a href="/root-ember-seed-co/about" class="btn btn-outline-brand btn-lg" data-nav-link data-section="about">Our Story</a>
+          </div>
+          <div class="d-flex gap-4 flex-wrap">
+            <div><div class="stat-num">640+</div><div class="stat-label">Rare Varieties</div></div>
+            <div><div class="stat-num">98%</div><div class="stat-label">Germination Rate</div></div>
+            <div><div class="stat-num">32</div><div class="stat-label">Countries Shipped</div></div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="hero-img-wrap position-relative mx-auto">
+            <img src="https://loremflickr.com/760/760/seeds,harvest?lock=101" alt="Crate of freshly harvested crop seeds" class="hero-img">
+            <div class="hero-badge position-absolute d-flex align-items-center gap-2" style="left:0;bottom:1rem;max-width:230px;">
+              <i class="bi bi-patch-check-fill text-lime fs-4"></i>
+              <div><strong class="d-block small">Certified Organic</strong><span class="small" style="color:var(--re-text-muted);">USDA &amp; EU verified</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why Us -->
+  <div class="container py-5">
+    <div class="mb-5" style="max-width:640px;">
+      <p class="eyebrow mb-2"><i class="bi bi-award me-1"></i> Why Root &amp; Ember</p>
+      <h2 class="mb-2">Bred for real soil, not lab conditions.</h2>
+      <p style="color:var(--re-text-muted);">Every crop variety in our vault is grown out, trialed, and re-selected on our own trial plots before it reaches your mailbox.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-globe-americas"></i></div>
+          <h3 class="h5">Biodiversity First</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Every rare crop variety we preserve is one less line lost to monoculture.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-clipboard2-check"></i></div>
+          <h3 class="h5">Radical Transparency</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Germination rate, grow-out location, and seed age printed on every packet.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-people"></i></div>
+          <h3 class="h5">Grower-Led</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Half our catalog comes from customer seed swaps. You grow it, you submit it.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-shield-check"></i></div>
+          <h3 class="h5">Germination Guarantee</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Lab-tested every season — if it doesn't sprout, we replace it free.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Crop Categories -->
+  <div class="container py-5">
+    <div class="mb-5" style="max-width:640px;">
+      <p class="eyebrow mb-2"><i class="bi bi-grid-3x3-gap me-1"></i> Browse by Crop Type</p>
+      <h2 class="mb-0">Six ways into the vault.</h2>
+    </div>
+    <div class="row g-3">
+      <div class="col-6 col-lg-4">
+        <div class="category-tile" role="link" tabindex="0" data-nav-link data-section="products" data-preset-filter="vegetable">
+          <img src="https://loremflickr.com/500/380/vegetable,garden?lock=102" alt="Vegetable crops">
+          <div class="tile-label"><span>120+ varieties</span><h3>Vegetables</h3></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-4">
+        <div class="category-tile" role="link" tabindex="0" data-nav-link data-section="products" data-preset-filter="grain">
+          <img src="https://loremflickr.com/500/380/wheat,field?lock=103" alt="Grain crops">
+          <div class="tile-label"><span>40+ varieties</span><h3>Grains</h3></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-4">
+        <div class="category-tile" role="link" tabindex="0" data-nav-link data-section="products" data-preset-filter="flower">
+          <img src="https://loremflickr.com/500/380/sunflower,flower?lock=104" alt="Flower and pollinator crops">
+          <div class="tile-label"><span>85+ varieties</span><h3>Pollinator &amp; Flower</h3></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-4">
+        <div class="category-tile" role="link" tabindex="0" data-nav-link data-section="products" data-preset-filter="herb">
+          <img src="https://loremflickr.com/500/380/herbs,basil?lock=105" alt="Herb crops">
+          <div class="tile-label"><span>60+ varieties</span><h3>Herbs</h3></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-4">
+        <div class="category-tile" role="link" tabindex="0" data-nav-link data-section="products" data-preset-filter="cover">
+          <img src="https://loremflickr.com/500/380/clover,field?lock=106" alt="Cover crop varieties">
+          <div class="tile-label"><span>25+ varieties</span><h3>Cover Crops</h3></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-4">
+        <div class="category-tile" role="link" tabindex="0" data-nav-link data-section="products" data-preset-filter="micro">
+          <img src="https://loremflickr.com/500/380/sprouts,seedling?lock=217" alt="Microgreen crops">
+          <div class="tile-label"><span>18+ varieties</span><h3>Microgreens</h3></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="container py-5">
+    <div class="mb-5 text-center mx-auto" style="max-width:640px;">
+      <p class="eyebrow mb-2"><i class="bi bi-chat-quote me-1"></i> Grower Notes</p>
+      <h2 class="mb-0">What's growing out there.</h2>
+    </div>
+    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+      <button type="button" class="btn btn-sm btn-outline-brand position-relative mb-3" id="carouselPauseBtn" style="z-index:5;" aria-pressed="false">
+        <i class="bi bi-pause-fill" aria-hidden="true"></i> <span id="carouselPauseLabel">Pause</span>
+      </button>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="testimonial-card">
+            <i class="bi bi-quote"></i>
+            <p class="quote">"The Black Krim tomato seed germinated at nearly 100% and out-produced every hybrid I've grown in fifteen years of market farming."</p>
+            <strong>Dana R.</strong><span class="d-block small" style="color:var(--re-text-muted);">Market Grower, Oregon</span>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="testimonial-card">
+            <i class="bi bi-quote"></i>
+            <p class="quote">"Every packet lists the grow-out farm and season. That kind of transparency is rare — and it shows in how the plants perform."</p>
+            <strong>Miguel T.</strong><span class="d-block small" style="color:var(--re-text-muted);">Community Garden Coordinator</span>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="testimonial-card">
+            <i class="bi bi-quote"></i>
+            <p class="quote">"We switched our whole cover crop program to Root &amp; Ember's clover blend. Soil health scores improved within one season."</p>
+            <strong>Priya S.</strong><span class="d-block small" style="color:var(--re-text-muted);">Regenerative Farm Owner</span>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+      <div class="carousel-indicators position-relative mt-3">
+        <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="page-section" data-section-panel>
+  <div class="container">
+    <div class="mb-5" style="max-width:640px;">
+      <p class="eyebrow mb-2"><i class="bi bi-seedling me-1"></i> About Us</p>
+      <h2>Started in a truck bed. Still a little feral.</h2>
+    </div>
+    <div class="row gy-5 align-items-center mb-5">
+      <div class="col-lg-6">
+        <img src="https://loremflickr.com/800/800/vegetables,harvest?lock=119" alt="Basket of freshly harvested mixed vegetables" class="rounded-organic shadow-lg">
+      </div>
+      <div class="col-lg-6">
+        <p class="fs-4 fst-italic" style="font-family:var(--re-font-display);">Root &amp; Ember started when our founder, a plant pathologist turned market farmer, got tired of catalog seed that performed great in a lab and folded in real soil.</p>
+        <p style="color:var(--re-text-muted);">Twelve years later we're a full seed house — but the standard hasn't moved: every crop variety in our vault is grown out, trialed, and re-selected on our own trial plots before it ever reaches your mailbox. We're not trying to be the biggest seed company. We're trying to be the one you trust with your soil.</p>
+        <ul class="list-unstyled mt-4">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-lime me-2"></i>100% open-pollinated &amp; non-GMO</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-lime me-2"></i>Grown on regenerative trial plots</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-lime me-2"></i>Small batches, tested every season</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="hover-card p-4 h-100 text-center">
+          <i class="bi bi-globe-americas fs-2 text-lime mb-2 d-block"></i>
+          <h3 class="h5">Biodiversity First</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Preserving crop lines industrial agriculture left behind.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="hover-card p-4 h-100 text-center">
+          <i class="bi bi-award fs-2 text-lime mb-2 d-block"></i>
+          <h3 class="h5">Radical Transparency</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">No exceptions on what's printed on the packet.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="hover-card p-4 h-100 text-center">
+          <i class="bi bi-people fs-2 text-lime mb-2 d-block"></i>
+          <h3 class="h5">Grower-Led</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Our catalog grows through customer seed swaps.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services" class="page-section" data-section-panel>
+  <div class="container">
+    <div class="mb-5" style="max-width:640px;">
+      <p class="eyebrow mb-2"><i class="bi bi-diagram-3 me-1"></i> Services</p>
+      <h2 class="mb-2">More than a seed packet.</h2>
+      <p style="color:var(--re-text-muted);">From backyard beds to hundred-acre farms, here's how we work with growers.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-basket3"></i></div>
+          <h3 class="h5">Custom Seed Blends</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Cover crop mixes, pollinator strips, and salad blends formulated to your climate and soil.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-clipboard2-pulse"></i></div>
+          <h3 class="h5">Germination Testing</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Lab-verified viability reports before you commit acreage.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-mortarboard"></i></div>
+          <h3 class="h5">Agronomy Consulting</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">One-on-one planning on variety selection and succession planting.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-truck"></i></div>
+          <h3 class="h5">Bulk &amp; Wholesale</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Farm-scale quantities with tiered pricing for co-ops and CSAs.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-box-seam"></i></div>
+          <h3 class="h5">Private Label Packaging</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">White-label seed packets for farm stands and garden centers.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="hover-card p-4 h-100">
+          <div class="icon-badge mb-3"><i class="bi bi-archive"></i></div>
+          <h3 class="h5">Seed Vault Storage</h3>
+          <p class="small mb-0" style="color:var(--re-text-muted);">Climate-controlled storage for growers preserving family varieties.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRODUCTS ============ -->
+<section id="products" class="page-section" data-section-panel>
+  <div class="container">
+    <div class="mb-4" style="max-width:640px;">
+      <p class="eyebrow mb-2"><i class="bi bi-flower3 me-1"></i> Product Info</p>
+      <h2 class="mb-2">The current vault.</h2>
+      <p style="color:var(--re-text-muted);">640+ crop varieties in our catalog — 16 shown here. Filter by type, tap any card for full growing details.</p>
+    </div>
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-5" id="productFilters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="grain">Grains</button>
+      <button class="filter-btn" data-filter="vegetable">Vegetables</button>
+      <button class="filter-btn" data-filter="flower">Pollinator &amp; Flower</button>
+      <button class="filter-btn" data-filter="herb">Herbs</button>
+      <button class="filter-btn" data-filter="cover">Cover Crops</button>
+      <button class="filter-btn" data-filter="micro">Microgreens</button>
+    </div>
+    <div class="row g-4" id="productGrid"><!-- populated by script --></div>
+    <nav aria-label="Product pages" class="mt-5">
+      <ul class="pagination justify-content-center" id="productPagination"><!-- populated by script --></ul>
+    </nav>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="page-section" data-section-panel>
+  <div class="container">
+    <div class="mb-5" style="max-width:640px;">
+      <p class="eyebrow mb-2"><i class="bi bi-envelope-paper me-1"></i> Contact</p>
+      <h2 class="mb-2">Talk seed with us.</h2>
+      <p style="color:var(--re-text-muted);">Wholesale inquiry, variety question, or just want to argue about tomatoes — reach out.</p>
+    </div>
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <div class="hover-card p-4">
+          <div class="d-flex gap-3 mb-3 pb-3 border-bottom border-brand">
+            <i class="bi bi-geo-alt-fill text-lime fs-5"></i>
+            <div><strong class="d-block">Farm &amp; Warehouse</strong><span class="small" style="color:var(--re-text-muted);">412 Rustbelt Road, Talent, OR 97540</span></div>
+          </div>
+          <div class="d-flex gap-3 mb-3 pb-3 border-bottom border-brand">
+            <i class="bi bi-envelope-fill text-lime fs-5"></i>
+            <div><strong class="d-block">Email</strong><span class="small" style="color:var(--re-text-muted);">hello@rootandember.seeds</span></div>
+          </div>
+          <div class="d-flex gap-3 mb-3 pb-3 border-bottom border-brand">
+            <i class="bi bi-telephone-fill text-lime fs-5"></i>
+            <div><strong class="d-block">Phone</strong><span class="small" style="color:var(--re-text-muted);">+1 (541) 555-0179</span></div>
+          </div>
+          <div class="d-flex gap-3 mb-4">
+            <i class="bi bi-clock-fill text-lime fs-5"></i>
+            <div><strong class="d-block">Order Desk Hours</strong><span class="small" style="color:var(--re-text-muted);">Mon&ndash;Fri, 8am&ndash;5pm PT</span></div>
+          </div>
+          <div class="social-row d-flex gap-2">
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+            <a href="#" aria-label="Pinterest"><i class="bi bi-pinterest"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <form class="contact-form hover-card p-4" id="contactForm" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small" for="cf-name">Full Name</label>
+              <input type="text" class="form-control" id="cf-name" name="name" required aria-describedby="cf-name-error">
+              <div class="invalid-feedback" id="cf-name-error">Please tell us your name.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small" for="cf-email">Email</label>
+              <input type="email" class="form-control" id="cf-email" name="email" required aria-describedby="cf-email-error">
+              <div class="invalid-feedback" id="cf-email-error">A valid email helps us reply.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label small" for="cf-subject">Subject</label>
+              <select class="form-select" id="cf-subject" name="subject" required aria-describedby="cf-subject-error">
+                <option value="" selected disabled>Choose one&hellip;</option>
+                <option value="wholesale">Wholesale / Bulk Order</option>
+                <option value="variety">Variety Question</option>
+                <option value="consulting">Agronomy Consulting</option>
+                <option value="other">Something Else</option>
+              </select>
+              <div class="invalid-feedback" id="cf-subject-error">Pick the closest topic.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label small" for="cf-message">Message</label>
+              <textarea class="form-control" id="cf-message" name="message" rows="5" required aria-describedby="cf-message-error"></textarea>
+              <div class="invalid-feedback" id="cf-message-error">A few words about what you need.</div>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-accent btn-lg">Send Message <i class="bi bi-send"></i></button>
+            </div>
+          </div>
+          <div class="alert mt-3 form-success" id="formSuccess" style="background:rgba(196,241,53,.12);border:1px solid var(--re-lime);color:var(--re-lime);">
+            <i class="bi bi-check-circle-fill me-1"></i> Thanks — your message has been queued. We reply within one business day.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     Modal lives here as a direct child of <body> — deliberately
+     NOT nested inside a <section>. Bootstrap modals use
+     position:fixed, and a transformed ancestor (our .page-section
+     fade-in animation sets `transform` on the active section)
+     breaks fixed positioning and corrupts the modal/backdrop
+     stacking order. Keeping it outside any transformed element
+     is the correct, standard fix.
+     ============================================================ -->
+
+<!-- Shared product detail modal (populated dynamically) -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-surface text-white border-brand">
+      <div class="modal-header border-brand">
+        <h5 class="modal-title mb-0" id="productModalTitle" style="min-width:0;"></h5>
+        <div class="d-flex align-items-center gap-3 ms-auto" style="flex-shrink:0;">
+          <span class="modal-counter" id="productModalCounter"></span>
+          <button type="button" class="btn-close btn-close-white m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="row g-4">
+          <div class="col-md-5">
+            <div class="modal-img-frame" style="min-height:220px;max-height:38vh;">
+              <button type="button" class="modal-nav-btn modal-nav-prev" id="productPrevBtn" aria-label="Previous product"><i class="bi bi-chevron-left"></i></button>
+              <img id="productModalImg" src="" alt="" style="max-height:38vh;">
+              <button type="button" class="modal-nav-btn modal-nav-next" id="productNextBtn" aria-label="Next product"><i class="bi bi-chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <p id="productModalDesc" style="color:var(--re-text-muted);"></p>
+            <table class="table table-sm spec-table mb-0">
+              <tbody id="productModalSpecs"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-brand">
+        <button type="button" class="btn btn-accent" id="productModalQuoteBtn">Request Quote <i class="bi bi-send"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer py-5">
+  <div class="container">
+    <div class="row gy-4 align-items-center">
+      <div class="col-md-6">
+        <span class="navbar-brand"><i class="bi bi-flower2 me-2"></i>Root <em>&amp;</em> Ember Seed Co.</span>
+        <p class="small mt-1 mb-0" style="color:var(--re-text-muted);">Heirloom seeds, boldly grown — since 2014.</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <p class="small mb-0" style="color:var(--re-text-faint);">&copy; <span id="year"></span> Root &amp; Ember Seed Co. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top"><i class="bi bi-arrow-up"></i></button>
+
+<!-- Bootstrap Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* ============================================================
+   Single inline script — no external JS files. Organized into
+   clearly separated blocks (nav / products / form) for readability
+   even though everything ships in one file.
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- NAV / SPA ROUTING ---------- */
+  var sections = Array.prototype.slice.call(document.querySelectorAll('[data-section-panel]'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('[data-nav-link]'));
+  var header = document.getElementById('mainNav');
+  var backToTop = document.getElementById('backToTop');
+  var navMenuEl = document.getElementById('navMenu');
+  var DEFAULT_SECTION = 'home';
+
+  /* Clean-path routing (no #hash): BASE_PATH is the deploy directory
+     (e.g. "/root-ember-seed-co"), computed once from whatever URL the
+     page first loads at — works whether that's the root or a deep
+     link like /root-ember-seed-co/about (served via 404.html, see
+     that file's comment for why GitHub Pages needs it). */
+  var SECTION_IDS = sections.map(function (s) { return s.id; });
+  var BASE_PATH = (function () {
+    var path = window.location.pathname.replace(/\/$/, '');
+    var segments = path.split('/');
+    if (SECTION_IDS.indexOf(segments[segments.length - 1]) !== -1) segments.pop();
+    return segments.join('/');
+  })();
+
+  function pathFor(id) {
+    return id === DEFAULT_SECTION ? (BASE_PATH + '/' || '/') : BASE_PATH + '/' + id;
+  }
+
+  function getSectionFromPath() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    var id = path.substring(BASE_PATH.length).replace(/^\//, '');
+    return SECTION_IDS.indexOf(id) !== -1 ? id : DEFAULT_SECTION;
+  }
+
+  function showSection(id, opts) {
+    opts = opts || {};
+    // Switching sections while the product modal is open (e.g. clicking
+    // a nav link without closing it first) must close it — otherwise
+    // it's left showing over/under the newly active section.
+    var openModalEl = document.querySelector('.modal.show');
+    if (openModalEl && window.bootstrap) {
+      var openModalInst = window.bootstrap.Modal.getInstance(openModalEl);
+      if (openModalInst) openModalInst.hide();
+    }
+    sections.forEach(function (s) { s.classList.toggle('active', s.id === id); });
+    navLinks.forEach(function (l) {
+      if (l.dataset.section) l.classList.toggle('is-active', l.dataset.section === id);
+    });
+    if (opts.updatePath !== false && window.location.pathname !== pathFor(id)) {
+      history.pushState(null, '', pathFor(id));
+    }
+    if (opts.scrollTop !== false) window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+  window.reShowSection = showSection; // used by product "Request Quote"
+
+  navLinks.forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var target = link.dataset.section;
+      if (!target) return;
+      e.preventDefault();
+      showSection(target);
+      // Homepage crop-category tiles carry a preset filter so landing
+      // on Products from "Vegetables" etc. pre-filters the grid.
+      var preset = link.dataset.presetFilter;
+      if (preset) {
+        var presetBtn = document.querySelector('#productFilters .filter-btn[data-filter="' + preset + '"]');
+        if (presetBtn) presetBtn.click();
+      }
+      if (navMenuEl && navMenuEl.classList.contains('show') && window.bootstrap) {
+        window.bootstrap.Collapse.getOrCreateInstance(navMenuEl).hide();
+      }
+    });
+  });
+
+  /* Keyboard support for non-native clickable elements
+     (category-tile links, product-card buttons): Enter/Space
+     triggers the same click handler already bound to the element. */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var target = e.target.closest('[role="link"][tabindex], [role="button"][tabindex]');
+    if (!target) return;
+    e.preventDefault();
+    target.click();
+  });
+
+  window.addEventListener('popstate', function () {
+    showSection(getSectionFromPath(), { updatePath: false });
+  });
+
+  window.addEventListener('scroll', function () {
+    header.classList.toggle('scrolled', window.scrollY > 24);
+    backToTop.classList.toggle('show', window.scrollY > 480);
+  }, { passive: true });
+
+  backToTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  showSection(getSectionFromPath(), { updatePath: false, scrollTop: false });
+
+  /* ---------- MODAL SCROLL LOCK (belt-and-suspenders) ----------
+     Bootstrap locks background scroll by setting overflow:hidden on
+     <body>. That relies on the browser propagating body's overflow
+     up to the viewport/<html> — a CSS behavior that doesn't always
+     hold (varies by engine/version), so the page can still scroll
+     behind an open modal. Locking <html> directly, driven by
+     Bootstrap's own show/hidden events (which bubble to document),
+     guarantees the background stays put regardless of that quirk. */
+  document.addEventListener('show.bs.modal', function () {
+    document.documentElement.style.overflow = 'hidden';
+    // back-to-top's z-index (1500) sits above the modal (1055) so it
+    // would otherwise float over the modal footer's bottom-right
+    // "Request Quote" button — same corner, both fixed-position.
+    backToTop.classList.remove('show');
+  });
+  document.addEventListener('hidden.bs.modal', function () {
+    document.documentElement.style.overflow = '';
+    backToTop.classList.toggle('show', window.scrollY > 480);
+  });
+
+  /* ---------- IMAGE FALLBACK ----------
+     Any <img> (static hero/about art or JS-rendered product photos)
+     that fails to load — dead link, blocked host, no match
+     for a keyword search — swaps to a themed placeholder instead of
+     showing a broken-image icon. Attached once per element; removes
+     itself after firing so a failing placeholder can't loop. */
+  function withImgFallback(img) {
+    if (img.dataset.fallbackBound) return;
+    img.dataset.fallbackBound = '1';
+    img.addEventListener('error', function onErr() {
+      img.removeEventListener('error', onErr);
+      img.src = 'https://placehold.co/800x600/1b1712/e8a93b?text=' + encodeURIComponent(img.alt || 'Root & Ember');
+    });
+  }
+
+  /* ---------- PRODUCTS ----------
+     16 varieties, 6 crop-type categories, 8 per page. No prices —
+     this is a catalog/inquiry site, not a storefront, so cards and
+     the detail modal drive toward "Request Quote" instead. */
+  var PAGE_SIZE = 8;
+  var PRODUCTS = [
+    { lock: 401, kw: 'tomato,heirloom', cat: 'vegetable', tag: 'Bestseller', name: 'Black Krim Tomato',
+      desc: 'Smoky-sweet heirloom slicer from the Black Sea coast. Indeterminate vines produce heavily through first frost.',
+      specs: [['Days to Maturity','75–85 days'],['Sun','Full sun'],['Spacing','24–36 in.'],['Packet Size','25 seeds'],['Germination Rate','96%']] },
+    { lock: 402, kw: 'carrot,rainbow', cat: 'vegetable', tag: 'Rare', name: 'Rainbow Cosmic Carrot Mix',
+      desc: 'Purple, yellow, and white roots in one packet. Sweet flavor with a low-fiber core, good for storage.',
+      specs: [['Days to Maturity','70 days'],['Sun','Full sun'],['Spacing','3 in.'],['Packet Size','300 seeds'],['Germination Rate','92%']] },
+    { lock: 403, kw: 'tomato,purple', cat: 'vegetable', tag: 'Bestseller', name: 'Cherokee Purple Tomato',
+      desc: 'Dusky-rose beefsteak with rich, low-acid flavor. A market-grower favorite for taste tests.',
+      specs: [['Days to Maturity','80–90 days'],['Sun','Full sun'],['Spacing','24–36 in.'],['Packet Size','25 seeds'],['Germination Rate','95%']] },
+    { lock: 404, kw: 'chard,vegetable', cat: 'vegetable', tag: 'Nutrient-Dense', name: 'Rainbow Chard',
+      desc: 'Vivid pink, gold, and white stems with tender, mild-flavored leaves. Cut-and-come-again all season.',
+      specs: [['Days to Maturity','55 days'],['Sun','Full sun–partial shade'],['Spacing','6–9 in.'],['Packet Size','100 seeds'],['Germination Rate','93%']] },
+    { lock: 405, kw: 'habanero,pepper', cat: 'vegetable', tag: 'Heat Lover', name: 'Habanero Pepper',
+      desc: 'Fruity heat for hot sauce and salsa. Prolific plants that keep producing into fall.',
+      specs: [['Days to Maturity','90–100 days'],['Sun','Full sun'],['Spacing','18–24 in.'],['Packet Size','20 seeds'],['Germination Rate','90%']] },
+    { lock: 406, kw: 'sunflower,flower', cat: 'flower', tag: 'Pollinator', name: 'Velvet Queen Sunflower',
+      desc: 'Deep burgundy petals on 5–6ft stalks. A favorite with native bees and a striking cut flower.',
+      specs: [['Days to Maturity','80 days'],['Sun','Full sun'],['Spacing','12 in.'],['Packet Size','20 seeds'],['Germination Rate','94%']] },
+    { lock: 407, kw: 'wildflower,meadow', cat: 'flower', tag: 'Blend', name: 'Wildflower Meadow Blend',
+      desc: '22-species regional mix built for pollinator strips, cover ground, and low-maintenance meadow plantings.',
+      specs: [['Coverage','200 sq ft / packet'],['Sun','Full sun'],['Sow Depth','Surface sow'],['Packet Size','5g'],['Bloom Window','Spring–Fall']] },
+    { lock: 408, kw: 'cosmos,flower', cat: 'flower', tag: 'Cut Flower', name: 'Cosmos Sensation Mix',
+      desc: 'Airy, long-stemmed blooms in pink, white, and crimson. Reliable repeat bloomer for cut-flower rows.',
+      specs: [['Days to Maturity','60 days'],['Sun','Full sun'],['Spacing','12–18 in.'],['Packet Size','50 seeds'],['Germination Rate','91%']] },
+    { lock: 409, kw: 'basil,herb', cat: 'herb', tag: 'Kitchen Staple', name: 'Genovese Basil',
+      desc: 'The classic pesto basil — large, glossy leaves with sweet, peppery flavor.',
+      specs: [['Days to Maturity','60–70 days'],['Sun','Full sun'],['Spacing','10–12 in.'],['Packet Size','150 seeds'],['Germination Rate','92%']] },
+    { lock: 410, kw: 'mint,herb', cat: 'herb', tag: 'Pollinator', name: 'Lemon Balm',
+      desc: 'Citrus-scented mint-family herb for tea and pollinator borders. Spreads readily once established.',
+      specs: [['Days to Maturity','70 days'],['Sun','Full sun–partial shade'],['Spacing','12–18 in.'],['Packet Size','100 seeds'],['Germination Rate','88%']] },
+    { lock: 411, kw: 'wheat,grain', cat: 'grain', tag: 'Heritage', name: 'Ancient Grain Wheat',
+      desc: 'Einkorn-lineage grain with low gluten and high protein. A favorite among home millers and bakers.',
+      specs: [['Days to Maturity','110 days'],['Sun','Full sun'],['Spacing','Broadcast'],['Packet Size','1 lb'],['Germination Rate','90%']] },
+    { lock: 412, kw: 'corn,field', cat: 'grain', tag: 'Heritage', name: 'Dent Corn (Open-Pollinated)',
+      desc: 'A dent corn variety selected over six seasons for standability and flavor. Grinds well for cornmeal.',
+      specs: [['Days to Maturity','95 days'],['Sun','Full sun'],['Spacing','8–12 in.'],['Packet Size','50 seeds'],['Germination Rate','91%']] },
+    { lock: 413, kw: 'oats,field', cat: 'grain', tag: 'Easy Hull', name: 'Hull-less Oats',
+      desc: 'Naked-seeded oats that thresh clean without dehulling — good for home-scale grain growing.',
+      specs: [['Days to Maturity','100 days'],['Sun','Full sun'],['Spacing','Broadcast'],['Packet Size','1 lb'],['Germination Rate','89%']] },
+    { lock: 414, kw: 'clover,field', cat: 'cover', tag: 'Nitrogen-Fixing', name: 'Crimson Clover',
+      desc: 'Fast-establishing cover crop that fixes nitrogen and suppresses weeds between growing seasons.',
+      specs: [['Coverage','1,000 sq ft / packet'],['Sun','Full sun'],['Sow Depth','1/4 in.'],['Packet Size','4 oz'],['Purpose','Nitrogen fixation']] },
+    { lock: 415, kw: 'rye,field', cat: 'cover', tag: 'Soil Builder', name: 'Winter Rye',
+      desc: 'Hardy overwintering cover crop for erosion control and organic matter — terminate and plant into it come spring.',
+      specs: [['Coverage','1,500 sq ft / packet'],['Sun','Full sun–partial shade'],['Sow Depth','1/2 in.'],['Packet Size','8 oz'],['Purpose','Erosion control & soil building']] },
+    { lock: 616, kw: 'sprouts,seedling', cat: 'micro', tag: 'Fast Grow', name: 'Spicy Microgreen Blend',
+      desc: 'Mustard, radish, and arugula mix. Countertop-ready in as little as 10 days, no garden required.',
+      specs: [['Days to Maturity','8–12 days'],['Sun','Bright indirect'],['Spacing','Dense sow'],['Packet Size','15g'],['Germination Rate','95%']] }
+  ];
+
+  var productGrid = document.getElementById('productGrid');
+  var productPagination = document.getElementById('productPagination');
+  function productImg(p, w, h) { return 'https://loremflickr.com/' + w + '/' + h + '/' + p.kw + '?lock=' + p.lock; }
+
+  var currentFilter = 'all';
+  var currentPage = 1;
+
+  function filteredIndices() {
+    var out = [];
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (currentFilter === 'all' || PRODUCTS[i].cat === currentFilter) out.push(i);
+    }
+    return out;
+  }
+
+  function renderProductGrid() {
+    var filtered = filteredIndices();
+    var totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var pageIndices = filtered.slice(start, start + PAGE_SIZE);
+
+    productGrid.innerHTML = pageIndices.map(function (i) {
+      var p = PRODUCTS[i];
+      return '<div class="col-md-6 col-lg-3">' +
+        '<div class="product-card h-100" data-index="' + i + '" role="button" tabindex="0" aria-label="View details: ' + p.name + '">' +
+        '<div class="product-img-wrap"><img src="' + productImg(p, 500, 380) + '" alt="' + p.name + '" loading="lazy"><span class="product-tag">' + p.tag + '</span></div>' +
+        '<div class="p-3">' +
+        '<h3 class="h6 mb-1">' + p.name + '</h3>' +
+        '<p class="small mb-3" style="color:var(--re-text-muted);">' + p.desc.slice(0, 74) + '&hellip;</p>' +
+        '<span class="btn btn-outline-brand btn-sm w-100">View Details</span>' +
+        '</div></div></div>';
+    }).join('');
+    Array.prototype.forEach.call(productGrid.querySelectorAll('img'), withImgFallback);
+
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    var html = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '">' +
+      '<button class="page-link" type="button" data-page="prev" aria-label="Previous page"><i class="bi bi-chevron-left"></i></button></li>';
+    for (var p = 1; p <= totalPages; p++) {
+      html += '<li class="page-item' + (p === currentPage ? ' active' : '') + '">' +
+        '<button class="page-link" type="button" data-page="' + p + '">' + p + '</button></li>';
+    }
+    html += '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '">' +
+      '<button class="page-link" type="button" data-page="next" aria-label="Next page"><i class="bi bi-chevron-right"></i></button></li>';
+    productPagination.innerHTML = totalPages > 1 ? html : '';
+  }
+
+  document.querySelectorAll('#productFilters .filter-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('#productFilters .filter-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      currentPage = 1;
+      renderProductGrid();
+    });
+  });
+
+  productPagination.addEventListener('click', function (e) {
+    var btn = e.target.closest('.page-link');
+    if (!btn || btn.closest('.page-item').classList.contains('disabled')) return;
+    var totalPages = Math.max(1, Math.ceil(filteredIndices().length / PAGE_SIZE));
+    if (btn.dataset.page === 'prev') currentPage = Math.max(1, currentPage - 1);
+    else if (btn.dataset.page === 'next') currentPage = Math.min(totalPages, currentPage + 1);
+    else currentPage = Number(btn.dataset.page);
+    renderProductGrid();
+    document.getElementById('productFilters').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  renderProductGrid();
+
+  /* ---------- CAROUSEL PAUSE CONTROL ----------
+     WCAG 2.2.2 (Pause, Stop, Hide): auto-advancing content needs a
+     user-operable pause mechanism, not just pause-on-hover (which
+     doesn't help touch/keyboard users). */
+  var testimonialCarouselEl = document.getElementById('testimonialCarousel');
+  var testimonialCarousel = bootstrap.Carousel.getOrCreateInstance(testimonialCarouselEl);
+  var carouselPauseBtn = document.getElementById('carouselPauseBtn');
+  var carouselPauseLabel = document.getElementById('carouselPauseLabel');
+  var carouselPaused = false;
+  carouselPauseBtn.addEventListener('click', function () {
+    carouselPaused = !carouselPaused;
+    if (carouselPaused) {
+      testimonialCarousel.pause();
+      carouselPauseLabel.textContent = 'Play';
+      carouselPauseBtn.querySelector('i').className = 'bi bi-play-fill';
+    } else {
+      testimonialCarousel.cycle();
+      carouselPauseLabel.textContent = 'Pause';
+      carouselPauseBtn.querySelector('i').className = 'bi bi-pause-fill';
+    }
+    carouselPauseBtn.setAttribute('aria-pressed', String(carouselPaused));
+  });
+
+  /* Product detail modal: prev/next nav is scoped to whatever the
+     current filter shows (spans all matching pages, not just the
+     page currently on screen), so arrows step through the filtered
+     catalog rather than jumping across filtered-out categories. */
+  var productModalEl = document.getElementById('productModal');
+  var productModal = new bootstrap.Modal(productModalEl);
+  var productModalImg = document.getElementById('productModalImg');
+  withImgFallback(productModalImg);
+  var currentProductList = [];
+  var currentProductPos = 0;
+
+  function openProductAt(pos) {
+    currentProductPos = (pos + currentProductList.length) % currentProductList.length;
+    var p = PRODUCTS[currentProductList[currentProductPos]];
+    document.getElementById('productModalTitle').textContent = p.name;
+    productModalImg.src = productImg(p, 700, 520);
+    productModalImg.alt = p.name;
+    document.getElementById('productModalDesc').textContent = p.desc;
+    document.getElementById('productModalCounter').textContent = (currentProductPos + 1) + ' / ' + currentProductList.length;
+    document.getElementById('productModalSpecs').innerHTML = p.specs.map(function (row) {
+      return '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td></tr>';
+    }).join('');
+  }
+
+  productGrid.addEventListener('click', function (e) {
+    var card = e.target.closest('.product-card');
+    if (!card) return;
+    currentProductList = filteredIndices();
+    var idx = Number(card.dataset.index);
+    openProductAt(currentProductList.indexOf(idx));
+    productModal.show();
+  });
+  document.getElementById('productPrevBtn').addEventListener('click', function () { openProductAt(currentProductPos - 1); });
+  document.getElementById('productNextBtn').addEventListener('click', function () { openProductAt(currentProductPos + 1); });
+
+  document.getElementById('productModalQuoteBtn').addEventListener('click', function () {
+    productModal.hide();
+    showSection('contact');
+    var subjectField = document.getElementById('cf-subject');
+    var messageField = document.getElementById('cf-message');
+    if (subjectField) subjectField.value = 'variety';
+    if (messageField) messageField.value = "Hi — I'd like a quote / availability for: " + PRODUCTS[currentProductList[currentProductPos]].name + '.';
+  });
+
+  /* Bind the fallback to every remaining static <img> on the page
+     (hero art, about photo, category tiles) now that all sections
+     have rendered. */
+  document.querySelectorAll('img').forEach(withImgFallback);
+
+  /* ---------- CONTACT FORM ---------- */
+  var contactForm = document.getElementById('contactForm');
+  var formSuccess = document.getElementById('formSuccess');
+  contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!contactForm.checkValidity()) {
+      contactForm.classList.add('was-validated');
+      return;
+    }
+    contactForm.classList.add('was-validated');
+    formSuccess.classList.add('show');
+    setTimeout(function () {
+      contactForm.reset();
+      contactForm.classList.remove('was-validated');
+    }, 400);
+    setTimeout(function () { formSuccess.classList.remove('show'); }, 6000);
+  });
+});
+</script>
+</body>
+</html>
