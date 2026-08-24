@@ -43,6 +43,20 @@ p{color:var(--re-text-muted);max-width:420px;margin:0 auto 1.75rem;}
 .btn-home:hover{background:var(--re-lime-dark);color:#14120f;}
 </style>
 </head>
+<script>
+  /* Deep links (e.g. /root-ember-seed-co/products) have no matching
+     file, so GitHub Pages lands here. If it's a real in-app route,
+     stash the path and bounce to index.html, which restores it and
+     shows the right section. Only unknown routes fall through to the
+     message below. */
+  var KNOWN = ['home', 'about', 'services', 'products', 'contact'];
+  var segs = location.pathname.split('/').filter(Boolean);
+  var last = segs[segs.length - 1];
+  if (KNOWN.indexOf(last) !== -1) {
+    sessionStorage.setItem('re-redirect-path', location.pathname);
+    location.replace('/root-ember-seed-co/');
+  }
+</script>
 <body>
   <div>
     <span class="brand-mark"><i class="bi bi-flower2"></i></span>

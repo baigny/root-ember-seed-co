@@ -188,7 +188,7 @@ a{color:var(--re-gold);} a:hover{color:var(--re-lime);}
           <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/" data-nav-link data-section="home">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/about" data-nav-link data-section="about">About</a></li>
           <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/services" data-nav-link data-section="services">Services</a></li>
-          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/products" data-nav-link data-section="products">Products</a></li>
+          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/products" data-nav-link data-section="products">Anzacs</a></li>
           <li class="nav-item"><a class="nav-link btn-nav-contact" href="/root-ember-seed-co/contact" data-nav-link data-section="contact">Contact</a></li>
         </ul>
       </div>
@@ -648,6 +648,14 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('year').textContent = new Date().getFullYear();
 
   /* ---------- NAV / SPA ROUTING ---------- */
+  /* Restore deep link stashed by 404.html (e.g. a direct hit on
+     /products) before computing BASE_PATH/section below. */
+  var redirectPath = sessionStorage.getItem('re-redirect-path');
+  if (redirectPath) {
+    sessionStorage.removeItem('re-redirect-path');
+    history.replaceState(null, '', redirectPath);
+  }
+
   var sections = Array.prototype.slice.call(document.querySelectorAll('[data-section-panel]'));
   var navLinks = Array.prototype.slice.call(document.querySelectorAll('[data-nav-link]'));
   var header = document.getElementById('mainNav');
