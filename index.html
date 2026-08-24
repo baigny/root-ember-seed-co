@@ -176,7 +176,7 @@ a{color:var(--re-gold);} a:hover{color:var(--re-lime);}
 <header>
   <nav class="navbar navbar-expand-lg fixed-top" id="mainNav" data-bs-theme="dark">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="/root-ember-seed-co/" data-nav-link>
+      <a class="navbar-brand d-flex align-items-center" href="/anzacs/" data-nav-link>
         <span class="brand-mark me-2"><i class="bi bi-flower2"></i></span>
         Anzacs&nbsp;Seed&nbsp;Co.
       </a>
@@ -185,11 +185,11 @@ a{color:var(--re-gold);} a:hover{color:var(--re-lime);}
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/" data-nav-link data-section="home">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/about" data-nav-link data-section="about">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/services" data-nav-link data-section="services">Services</a></li>
-          <li class="nav-item"><a class="nav-link" href="/root-ember-seed-co/products" data-nav-link data-section="products">Anzacs</a></li>
-          <li class="nav-item"><a class="nav-link btn-nav-contact" href="/root-ember-seed-co/contact" data-nav-link data-section="contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/anzacs/" data-nav-link data-section="home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/anzacs/about" data-nav-link data-section="about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/anzacs/services" data-nav-link data-section="services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="/anzacs/products" data-nav-link data-section="products">Anzacs</a></li>
+          <li class="nav-item"><a class="nav-link btn-nav-contact" href="/anzacs/contact" data-nav-link data-section="contact">Contact</a></li>
         </ul>
       </div>
     </div>
@@ -213,8 +213,8 @@ a{color:var(--re-gold);} a:hover{color:var(--re-lime);}
           <h1 class="hero-title mb-4">Heirloom seeds,<br><span class="text-rust">boldly</span> grown.</h1>
           <p class="fs-5 text-body-secondary mb-4" style="max-width:540px;color:var(--re-text-muted)!important;">We save, breed, and ship rare and open-pollinated crop varieties to growers who think a garden should be a little dangerous. No hybrids that quit on you. No beige tomatoes.</p>
           <div class="d-flex gap-3 flex-wrap mb-5">
-            <a href="/root-ember-seed-co/products" class="btn btn-accent btn-lg" data-nav-link data-section="products">Shop Varieties <i class="bi bi-arrow-right"></i></a>
-            <a href="/root-ember-seed-co/about" class="btn btn-outline-brand btn-lg" data-nav-link data-section="about">Our Story</a>
+            <a href="/anzacs/products" class="btn btn-accent btn-lg" data-nav-link data-section="products">Shop Varieties <i class="bi bi-arrow-right"></i></a>
+            <a href="/anzacs/about" class="btn btn-outline-brand btn-lg" data-nav-link data-section="about">Our Story</a>
           </div>
           <div class="d-flex gap-4 flex-wrap">
             <div><div class="stat-num">640+</div><div class="stat-label">Rare Varieties</div></div>
@@ -664,15 +664,15 @@ document.addEventListener('DOMContentLoaded', function () {
   var DEFAULT_SECTION = 'home';
 
   /* Clean-path routing (no #hash): BASE_PATH is the deploy directory
-     (e.g. "/root-ember-seed-co"), computed once from whatever URL the
+     (e.g. "/anzacs"), computed once from whatever URL the
      page first loads at — works whether that's the root or a deep
-     link like /root-ember-seed-co/about (served via 404.html, see
+     link like /anzacs/about (served via 404.html, see
      that file's comment for why GitHub Pages needs it).
      Site routes are always exactly BASE_PATH or BASE_PATH/<segment> —
      so the last path segment (if there's more than one) is always the
      route, valid or not. Popping it only when it matches a known
      section id (the old logic) corrupted BASE_PATH itself on an
-     invalid deep link (e.g. /root-ember-seed-co/typo), which then
+     invalid deep link (e.g. /anzacs/typo), which then
      leaked into every link built afterward. */
   var SECTION_IDS = sections.map(function (s) { return s.id; });
   var BASE_PATH = (function () {

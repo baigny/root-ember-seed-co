@@ -44,7 +44,7 @@ p{color:var(--re-text-muted);max-width:420px;margin:0 auto 1.75rem;}
 </style>
 </head>
 <script>
-  /* Deep links (e.g. /root-ember-seed-co/products) have no matching
+  /* Deep links (e.g. /anzacs/products) have no matching
      file, so GitHub Pages lands here. If it's a real in-app route,
      stash the path and bounce to index.html, which restores it and
      shows the right section. Only unknown routes fall through to the
@@ -54,7 +54,7 @@ p{color:var(--re-text-muted);max-width:420px;margin:0 auto 1.75rem;}
   var last = segs[segs.length - 1];
   if (KNOWN.indexOf(last) !== -1) {
     sessionStorage.setItem('re-redirect-path', location.pathname);
-    location.replace('/root-ember-seed-co/');
+    location.replace('/anzacs/');
   }
 </script>
 <body>
@@ -63,7 +63,7 @@ p{color:var(--re-text-muted);max-width:420px;margin:0 auto 1.75rem;}
     <p class="eyebrow mb-0"><i class="bi bi-exclamation-triangle me-1"></i> 404</p>
     <h2>This bed hasn't been planted.</h2>
     <p>The page you're looking for doesn't exist.</p>
-    <a class="btn-home" href="/root-ember-seed-co/">Back to Home <i class="bi bi-arrow-right"></i></a>
+    <a class="btn-home" href="/anzacs/">Back to Home <i class="bi bi-arrow-right"></i></a>
   </div>
 </body>
 </html>
